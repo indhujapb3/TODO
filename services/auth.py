@@ -1,13 +1,20 @@
 from sqlalchemy.orm import Session
 
 from app.models.user import User
-from app.schemas.auth import LoginRequest
+from app.schemas.auth import LoginRequest, TokenResponse
 from app.schemas.user import UserCreate
 
 from app.repositories.user import (
     create_user,
     get_user_by_username,
 )
+
+from app.security.password import (
+    hash_password,
+    verify_password,
+)
+
+from app.security.jwt import create_access_token
 
 
 def register_user(
@@ -24,20 +31,26 @@ def register_user(
     if existing_user:
         raise ValueError("Username already exists")
 
-    # Create user
+    # Hash the password
+    hashed_password = hash_password(
+        user_data.password
+    )
+
+    # Create SQLAlchemy User model
     user = User(
         username=user_data.username,
-        password=user_data.password,
+        password=hashed_password,
         role="user"
     )
 
+    # Save user
     return create_user(db, user)
 
 
-def authenticate_user(
+def login_user(
     db: Session,
     login_data: LoginRequest
-) -> User | None:
+) -> TokenResponse:
 
     # Find user by username
     user = get_user_by_username(
@@ -45,11 +58,28 @@ def authenticate_user(
         login_data.username
     )
 
+    # User doesn't exist
     if user is None:
-        return None
+        raise ValueError("Invalid username or password")
 
-    # Temporary password check
-    if user.password != login_data.password:
-        return None
+    # Verify password
+    password_valid = verify_password(
+        login_data.password,
+        user.password
+    )
 
-    return user
+    # Password is incorrect
+    if not password_valid:
+        raise ValueError("Invalid username or password")
+
+    # Create JWT
+    access_token = create_access_token(
+        user_id=user.id,
+        role=user.role
+    )
+
+    # Return token response
+    return TokenResponse(
+        access_token=access_token,
+        token_type="bearer"
+    )
