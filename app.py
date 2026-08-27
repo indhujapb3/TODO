@@ -5,7 +5,7 @@ from database import Base, engine
 from models.user import User
 from models.task import Task
 
-from routers import auth, user, task
+from routers import auth, user, task, admin
 
 
 app = FastAPI(
@@ -23,6 +23,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(task.router)
+app.include_router(admin.router)
 
 
 @app.get("/")
