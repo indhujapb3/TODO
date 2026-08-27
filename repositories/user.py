@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.models.user import User
+from models.user import User
 
 
 def create_user(db: Session, user: User) -> User:

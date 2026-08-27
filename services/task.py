@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
 
-from app.models.task import Task
-from app.schemas.task import (
+from models.task import Task
+from schemas.task import (
     TaskCreate,
     TaskUpdate,
     TaskStatusUpdate,
 )
 
-from app.repositories.task import (
+from repositories.task import (
     create_task,
     get_task_by_id,
     get_tasks_by_user,

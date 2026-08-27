@@ -1,20 +1,20 @@
 from sqlalchemy.orm import Session
 
-from app.models.user import User
-from app.schemas.auth import LoginRequest, TokenResponse
-from app.schemas.user import UserCreate
+from models.user import User
+from schemas.auth import LoginRequest, TokenResponse
+from schemas.user import UserCreate
 
-from app.repositories.user import (
+from repositories.user import (
     create_user,
     get_user_by_username,
 )
 
-from app.security.password import (
+from security.password import (
     hash_password,
     verify_password,
 )
 
-from app.security.jwt import create_access_token
+from security.jwt import create_access_token
 
 
 def register_user(
