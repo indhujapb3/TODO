@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 
-from app.routers import auth, user, task
+from database import Base, engine
+
+from models.user import User
+from models.task import Task
+
+from routers import auth, user, task
 
 
 app = FastAPI(
@@ -10,6 +15,11 @@ app = FastAPI(
 )
 
 
+# Create database tables
+Base.metadata.create_all(bind=engine)
+
+
+# Register routers
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(task.router)
