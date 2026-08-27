@@ -48,20 +48,21 @@ def create_task(
     )
 
 
-# GET ALL TASKS OF CURRENT USER
+# GET TASKS OF CURRENT USER
 @router.get(
     "",
     response_model=list[TaskResponse]
 )
 def get_tasks(
+    completed: bool | None = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     return get_user_tasks(
         db,
-        current_user.id
+        current_user.id,
+        completed
     )
-
 
 # GET ONE TASK
 @router.get(

@@ -25,14 +25,21 @@ def get_task_by_id(
 
 def get_tasks_by_user(
     db: Session,
-    user_id: int
+    user_id: int,
+    completed: bool | None = None
 ) -> list[Task]:
 
-    return (
+    query = (
         db.query(Task)
         .filter(Task.user_id == user_id)
-        .all()
     )
+
+    if completed is not None:
+        query = query.filter(
+            Task.completed == completed
+        )
+
+    return query.all()
 
 
 def update_task_name(

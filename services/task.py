@@ -37,10 +37,15 @@ def create_user_task(
 
 def get_user_tasks(
     db: Session,
-    user_id: int
+    user_id: int,
+    completed: bool | None = None
 ) -> list[Task]:
 
-    return get_tasks_by_user(db, user_id)
+    return get_tasks_by_user(
+        db,
+        user_id,
+        completed
+    )
 
 
 def get_user_task(
