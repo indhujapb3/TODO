@@ -6,6 +6,17 @@ from models.user import User
 from models.task import Task
 
 from routers import auth, user, task, admin
+import logging
+
+from fastapi import FastAPI
+
+from logging_config import setup_logging
+
+from routers import auth, user, task, admin
+
+setup_logging()
+
+logger = logging.getLogger(__name__)
 
 
 app = FastAPI(

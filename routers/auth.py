@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -19,6 +21,10 @@ from services.auth import (
 )
 
 
+# Create logger for this module
+logger = logging.getLogger(__name__)
+
+
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
@@ -35,12 +41,28 @@ def register(
     db: Session = Depends(get_db)
 ):
     try:
-        return register_user(
+        user = register_user(
             db,
             user_data
         )
 
+        # Log successful registration
+        logger.info(
+            "User registered successfully: username=%s",
+            user_data.username
+        )
+
+        return user
+
     except ValueError as e:
+
+        # Log failed registration
+        logger.warning(
+            "User registration failed: username=%s reason=%s",
+            user_data.username,
+            str(e)
+        )
+
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
@@ -56,12 +78,28 @@ def login(
     db: Session = Depends(get_db)
 ):
     try:
-        return login_user(
+        token_response = login_user(
             db,
             login_data
         )
 
+        # Log successful login
+        logger.info(
+            "User logged in successfully: username=%s",
+            login_data.username
+        )
+
+        return token_response
+
     except ValueError as e:
+
+        # Log failed login
+        logger.warning(
+            "User login failed: username=%s reason=%s",
+            login_data.username,
+            str(e)
+        )
+
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e)
