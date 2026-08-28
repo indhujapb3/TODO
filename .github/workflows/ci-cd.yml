@@ -30,6 +30,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run tests
+        env:
+          JWT_SECRET_KEY: test-secret-key-for-github-actions
         run: |
           python -m pytest -v
 
@@ -47,4 +49,5 @@ jobs:
     steps:
 
       - name: Trigger Render deployment
-        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
